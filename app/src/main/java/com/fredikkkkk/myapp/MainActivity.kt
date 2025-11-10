@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.content.Intent
+import android.net.Uri
 import com.fredikkkkk.myapp.ui.theme.MyAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -34,9 +35,22 @@ class MainActivity : ComponentActivity() {
                     MainScreen(
                         onButtonClick = {
                             val intent = Intent(this, MainActivity2::class.java).apply{
-                                intent.putExtra("USER_NAME","Fredikkkkk")
+                                putExtra("USER_NAME","Fredikkkkk")
                             }
                             startActivity(intent)
+                        },
+                        onCall = {
+                            val phoneNumber = "tel:+79854237659"
+                            val intent = Intent(Intent.ACTION_DIAL, Uri.parse(phoneNumber))
+                            startActivity(intent)
+                        },
+                        shareText = {
+                            val texttosend = "Hi! Now im know everything about intent"
+                            val intent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, texttosend)
+                            }
+                            startActivity(Intent.createChooser(intent, "Share by..."))
                         },
                         modifier = Modifier.padding(innerPadding)
                     )
@@ -47,7 +61,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(onButtonClick: () -> Unit, modifier: Modifier = Modifier){
+fun MainScreen(onButtonClick: () -> Unit, onCall: () -> Unit, shareText: () -> Unit, modifier: Modifier = Modifier){
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -59,21 +73,14 @@ fun MainScreen(onButtonClick: () -> Unit, modifier: Modifier = Modifier){
         Button(onClick = onButtonClick) {
             Text("Open a second Activity")
         }
-    }
-}
-/* fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        color = Color.Red,
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = modifier
-    )
-}
+        Spacer(modifier = Modifier.height(24.dp))
 
-@Preview(showBackground = true)
-fun GreetingPreview() {
-    MyAppTheme {
-        Greeting("Android")
+        Button(onClick = onCall)
+        {
+            Text("Click to call")
+        }
+        Button(onClick = shareText) {
+            Text("Click to share text")
+        }
     }
-}*/
+}
